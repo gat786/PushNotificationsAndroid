@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "891898540647",
+    "project_id": "push-notifs-34fd0",
+    "storage_bucket": "push-notifs-34fd0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:891898540647:android:5da2640ac5a15430045ac2",
+        "android_client_info": {
+          "package_name": "io.nethermind.pushnotifications"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "891898540647-q7g6f1uvgdo1k4mkhu0td6aa33ead3og.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCu2moiR16ZcL3x-XYnrdhc4m_XHwvAIes"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "891898540647-q7g6f1uvgdo1k4mkhu0td6aa33ead3og.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
