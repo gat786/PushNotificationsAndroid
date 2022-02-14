@@ -12,26 +12,34 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.video.Recorder
-import androidx.camera.video.Recording
-import androidx.camera.video.VideoCapture
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import io.nethermind.pushnotifications.databinding.ActivityBarcodeScannerBinding
 import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 class BarcodeScanner : AppCompatActivity() {
     private lateinit var viewBinding: ActivityBarcodeScannerBinding
 
     private var imageCapture: ImageCapture? = null
 
-    private var videoCapture: VideoCapture<Recorder>? = null
-    private var recording: Recording? = null
-
     private lateinit var cameraExecutor: ExecutorService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_barcode_scanner)
+        viewBinding = ActivityBarcodeScannerBinding.inflate(layoutInflater)
+        setContentView(viewBinding.root)
+
+        // Request camera permissions
+        if (allPermissionsGranted()) {
+            startCamera()
+        } else {
+            ActivityCompat.requestPermissions(
+                this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
+        }
+
+        cameraExecutor = Executors.newSingleThreadExecutor()
+
     }
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {

@@ -3,6 +3,7 @@ package io.nethermind.pushnotifications
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -28,9 +29,14 @@ class MainActivity : AppCompatActivity() {
             val clip = ClipData.newPlainText(firebaseToken, firebaseToken);
             clipboard.setPrimaryClip(clip)
         }
+
+        scanQrCodeButton.setOnClickListener {
+            val intent = Intent(this, BarcodeScanner::class.java)
+            startActivity(intent)
+        }
     }
 
-    fun getFirebaseToken() {
+    private fun getFirebaseToken() {
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {
                 Log.w(TAG, "Fetching FCM registration token failed", task.exception)
