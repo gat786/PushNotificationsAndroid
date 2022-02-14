@@ -14,7 +14,7 @@ import com.google.firebase.messaging.ktx.messaging
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
-    val TAG = "MainActivity";
+    val TAG = "LaunchPage";
     var firebaseToken = "";
 
     override fun onCreate(savedInstanceState: Bundle?) {
