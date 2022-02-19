@@ -15,6 +15,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import io.nethermind.pushnotifications.databinding.ActivityBarcodeScannerBinding
+import kotlinx.android.synthetic.main.activity_barcode_scanner.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -82,9 +83,11 @@ class BarcodeScanner : AppCompatActivity() {
                 it.setAnalyzer(cameraExecutor, BarCodeAnalyzer{result -> run {
                     val barcodes = result.barcodes;
                     barcodes.forEach {
-                        it.rawValue?.let { it1 -> Toast.makeText(applicationContext, it1, Toast.LENGTH_SHORT).show() }
+                        it.rawValue?.let { it1 ->
+                            Toast.makeText(applicationContext, it1, Toast.LENGTH_SHORT).show()
+                            qrScanResult.text = it1
+                        }
                     }
-
                 }})
             }
 
