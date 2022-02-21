@@ -1,10 +1,12 @@
 package io.nethermind.pushnotifications
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
@@ -16,8 +18,10 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import io.nethermind.pushnotifications.databinding.ActivityBarcodeScannerBinding
 import kotlinx.android.synthetic.main.activity_barcode_scanner.*
+import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import kotlin.concurrent.schedule
 
 class BarcodeScanner : AppCompatActivity() {
     private lateinit var viewBinding: ActivityBarcodeScannerBinding
@@ -64,6 +68,16 @@ class BarcodeScanner : AppCompatActivity() {
         }
     }
 
+    private fun moveToMainActivityWithResult(result: String){
+        val intent = Intent(this, MainActivity::class.java)
+        val bundle = Bundle()
+        bundle.putString("result", result)
+        Timer().schedule(3000){
+            startActivity(intent, bundle)
+        }
+
+    }
+
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
 
@@ -85,7 +99,10 @@ class BarcodeScanner : AppCompatActivity() {
                     barcodes.forEach {
                         it.rawValue?.let { it1 ->
                             Toast.makeText(applicationContext, it1, Toast.LENGTH_SHORT).show()
-                            qrScanResult.text = it1
+                            cameraProvider.unbindAll()
+                            qrScanResult.visibility = View.VISIBLE
+                            progressBar.visibility = View.VISIBLE
+                            moveToMainActivityWithResult(it1)
                         }
                     }
                 }})

@@ -1,8 +1,5 @@
 package io.nethermind.pushnotifications
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -24,15 +21,23 @@ class MainActivity : AppCompatActivity() {
 
         getFirebaseToken()
 
-        copyTokenButton.setOnClickListener {
-            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText(firebaseToken, firebaseToken);
-            clipboard.setPrimaryClip(clip)
-        }
-
         scanQrCodeButton.setOnClickListener {
             val intent = Intent(this, BarcodeScanner::class.java)
             startActivity(intent)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkBundle()
+    }
+
+    private fun checkBundle(){
+        val bundle = intent.extras
+        if(bundle?.containsKey("result") == true){
+            val message = "Login data is ${bundle.get("result")}"
+            Log.d(TAG, message)
+            Toast.makeText(this,message , Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -50,9 +55,7 @@ class MainActivity : AppCompatActivity() {
 
             // Log and toast
             val msg = firebaseToken
-            deviceTokenTextView.text = firebaseToken
             Log.d(TAG, "Token is $msg")
-            Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
         })
     }
 }
