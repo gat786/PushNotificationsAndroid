@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.amplifyframework.AmplifyException
+import com.amplifyframework.core.Amplify
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
@@ -20,10 +22,20 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         getFirebaseToken()
+        setupAmplify()
 
         scanQrCodeButton.setOnClickListener {
             val intent = Intent(this, BarcodeScanner::class.java)
             startActivity(intent)
+        }
+    }
+
+    private fun setupAmplify(){
+        try{
+            Amplify.configure(applicationContext)
+            Log.i(TAG, "Initialised Amplify")
+        }catch (error: AmplifyException){
+            Log.e(TAG, "Could not initialise Amplify", error)
         }
     }
 

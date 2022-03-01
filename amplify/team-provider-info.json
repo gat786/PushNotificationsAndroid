@@ -1,0 +1,15 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-melangefe-dev-153247-authRole",
+      "UnauthRoleArn": "arn:aws:iam::228016254426:role/amplify-melangefe-dev-153247-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::228016254426:role/amplify-melangefe-dev-153247-authRole",
+      "Region": "us-east-2",
+      "DeploymentBucketName": "amplify-melangefe-dev-153247-deployment",
+      "UnauthRoleName": "amplify-melangefe-dev-153247-unauthRole",
+      "StackName": "amplify-melangefe-dev-153247",
+      "StackId": "arn:aws:cloudformation:us-east-2:228016254426:stack/amplify-melangefe-dev-153247/aa4af2e0-5fe9-11ec-83e3-0619028c6e74",
+      "AmplifyAppId": "d11upullppzhoe"
+    }
+  }
+}
