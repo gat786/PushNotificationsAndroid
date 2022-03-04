@@ -1,11 +1,12 @@
 package io.nethermind.pushnotifications
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.amplifyframework.AmplifyException
+import com.amplifyframework.auth.AuthProvider
+import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
 import com.amplifyframework.core.Amplify
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.ktx.Firebase
@@ -25,18 +26,38 @@ class MainActivity : AppCompatActivity() {
         setupAmplify()
 
         scanQrCodeButton.setOnClickListener {
-            val intent = Intent(this, BarcodeScanner::class.java)
-            startActivity(intent)
+//            val intent = Intent(this, BarcodeScanner::class.java)
+//            startActivity(intent)
+
+            Amplify.Auth.signInWithSocialWebUI(AuthProvider.google(),
+                this,
+                {
+                    Log.d(TAG, "Signing in successful ${it.isSignInComplete}")
+                },
+                {
+                    Log.d(TAG, "Signing in failed")
+                    Log.e(TAG, it.stackTrace.toString())
+                }
+            )
         }
     }
 
     private fun setupAmplify(){
         try{
-            Amplify.configure(applicationContext)
             Log.i(TAG, "Initialised Amplify")
+            Amplify.addPlugin(AWSCognitoAuthPlugin())
+            Amplify.configure(applicationContext)
+            fetchCurrentUser()
         }catch (error: AmplifyException){
             Log.e(TAG, "Could not initialise Amplify", error)
         }
+    }
+
+    private fun fetchCurrentUser(){
+        Amplify.Auth.fetchAuthSession(
+            { Log.i("AmplifyQuickstart", "Auth session = $it") },
+            { error -> Log.e("AmplifyQuickstart", "Failed to fetch auth session", error) }
+        )
     }
 
     override fun onResume() {
