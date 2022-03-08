@@ -10,6 +10,17 @@
       "StackName": "amplify-melangefe-dev-153247",
       "StackId": "arn:aws:cloudformation:us-east-2:228016254426:stack/amplify-melangefe-dev-153247/aa4af2e0-5fe9-11ec-83e3-0619028c6e74",
       "AmplifyAppId": "d11upullppzhoe"
+    },
+    "categories": {
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d11upullppzhoe",
+          "type": "cicd"
+        }
+      },
+      "auth": {
+        "melangefe12e7b51a": {}
+      }
     }
   }
 }

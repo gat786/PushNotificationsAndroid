@@ -15,8 +15,11 @@ import com.google.firebase.messaging.ktx.messaging
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
-    val TAG = "LaunchPage";
-    var firebaseToken = "";
+    companion object {
+        val TAG = "MainActivity";
+        var firebaseToken = "";
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,11 +35,14 @@ class MainActivity : AppCompatActivity() {
             Amplify.Auth.signInWithSocialWebUI(AuthProvider.google(),
                 this,
                 {
-                    Log.d(TAG, "Signing in successful ${it.isSignInComplete}")
+                    Log.d(TAG, "Signing in successful ${it.nextStep}")
+                    val currentUser = Amplify.Auth.currentUser;
+                    Log.d(TAG, "Current user is ${currentUser}")
                 },
                 {
                     Log.d(TAG, "Signing in failed")
-                    Log.e(TAG, it.stackTrace.toString())
+                    it.printStackTrace()
+//                    Log.e(TAG, it.stackTrace.toString())
                 }
             )
         }
