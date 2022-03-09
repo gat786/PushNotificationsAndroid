@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "891898540647-al089v225oqb7c35bf3t92q1g4fdbiqj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.nethermind.pushnotifications",
+            "certificate_hash": "a718f870b29fc29cc82e0e42b7e24b8097948a78"
+          }
+        },
+        {
           "client_id": "891898540647-q7g6f1uvgdo1k4mkhu0td6aa33ead3og.apps.googleusercontent.com",
           "client_type": 3
         }
