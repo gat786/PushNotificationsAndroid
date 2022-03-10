@@ -1,7 +1,9 @@
 package io.nethermind.pushnotifications
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.amplifyframework.AmplifyException
@@ -27,6 +29,7 @@ class MainActivity : AppCompatActivity() {
 
         getFirebaseToken()
         setupAmplify()
+        getCurrentUserData()
 
         scanQrCodeButton.setOnClickListener {
 //            val intent = Intent(this, BarcodeScanner::class.java)
@@ -37,11 +40,6 @@ class MainActivity : AppCompatActivity() {
                 {
                     Log.d(TAG, "Signing in successful $it")
                     val currentUser = Amplify.Auth.currentUser;
-                    Log.d(TAG, "Current user is ${currentUser}")
-                    runOnUiThread {
-                        Toast.makeText(this, "Current logged in user is $currentUser", Toast.LENGTH_SHORT).show()
-                    }
-
                 },
                 {
                     Log.d(TAG, "Signing in failed")
@@ -53,6 +51,34 @@ class MainActivity : AppCompatActivity() {
 //                    Log.e(TAG, it.stackTrace.toString())
                 }
             )
+        }
+    }
+
+    fun getCurrentUserData() {
+        Amplify.Auth.fetchAuthSession(
+            {
+                Log.i(TAG, "Auth session = ${it.isSignedIn}")
+                if (it.isSignedIn){
+                    runOnUiThread {
+                        notLoggedInLayout.visibility = View.GONE
+                        loggedInLayout.visibility = View.VISIBLE
+                    }
+                }else{
+                    runOnUiThread {
+                        loggedInLayout.visibility = View.GONE
+                        notLoggedInLayout.visibility = View.VISIBLE
+                    }
+                }
+            },
+            { error -> Log.e(TAG, "Failed to fetch auth session", error) }
+        )
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == AWSCognitoAuthPlugin.WEB_UI_SIGN_IN_ACTIVITY_CODE) {
+            Amplify.Auth.handleWebUISignInResponse(data)
         }
     }
 
@@ -69,8 +95,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun fetchCurrentUser(){
         Amplify.Auth.fetchAuthSession(
-            { Log.i("AmplifyQuickstart", "Auth session = $it") },
-            { error -> Log.e("AmplifyQuickstart", "Failed to fetch auth session", error) }
+            { Log.i(TAG, "Auth session = $it") },
+            { error -> Log.e(TAG, "Failed to fetch auth session", error) }
         )
     }
 
