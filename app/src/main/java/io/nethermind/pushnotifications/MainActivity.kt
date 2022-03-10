@@ -5,10 +5,15 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.amazonaws.mobile.client.AWSMobileClient
+import com.amazonaws.mobile.client.Callback
+import com.amazonaws.mobile.client.IdentityProvider
+import com.amazonaws.mobile.client.UserStateDetails
 import com.amplifyframework.AmplifyException
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
 import com.amplifyframework.core.Amplify
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -17,6 +22,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.ktx.messaging
 import kotlinx.android.synthetic.main.activity_main.*
+
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -38,7 +44,7 @@ class MainActivity : AppCompatActivity() {
         getFirebaseToken()
         setupAmplify()
 
-        gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+        gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken(getString(R.string.default_web_client_id)).requestEmail().build();
         gsc = GoogleSignIn.getClient(this, gso)
 
         scanQrCodeButton.setOnClickListener {
@@ -58,13 +64,40 @@ class MainActivity : AppCompatActivity() {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
 
             try {
-                task.getResult(ApiException::class.java)
+                val account = task.getResult(ApiException::class.java)
                 Toast.makeText(this, "Logged in Successfully", Toast.LENGTH_SHORT).show()
+                federateWithGoogle(account = account)
             }catch ( exception: ApiException){
                 Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
                 exception.printStackTrace()
             }
 
+        }
+    }
+
+    /**
+     * Federate with Google authentication
+     */
+    fun federateWithGoogle(account: GoogleSignInAccount) {
+        if (account.idToken != null) {
+            Log.d(TAG, "Federating with Google")
+//            val userDetails = AWSMobileClient.getInstance().federatedSignIn(IdentityProvider.GOOGLE.name, account.idToken)
+//            Log.d(TAG, userDetails.details.toString())
+
+            AWSMobileClient.getInstance().federatedSignIn(IdentityProvider.GOOGLE.toString(), account.idToken, object :
+                Callback<UserStateDetails> {
+                override fun onResult(details: UserStateDetails) {
+                    // onResult is called, but the user information not saved to the cloud
+                    Log.d(TAG, "federated")
+                }
+
+                override fun onError(e: Exception) {
+                    Log.e(TAG, "sign-in error", e)
+                }
+            })
+
+        } else {
+            Log.d(TAG, "Federating with Google (ID token is null, so nothing happening)")
         }
     }
 
