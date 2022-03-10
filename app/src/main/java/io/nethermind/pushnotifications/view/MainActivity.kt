@@ -1,11 +1,13 @@
-package io.nethermind.pushnotifications
+package io.nethermind.pushnotifications.view
 
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import com.amplifyframework.AmplifyException
 import com.amplifyframework.auth.AuthProvider
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
@@ -14,14 +16,18 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.ktx.messaging
+import io.nethermind.pushnotifications.R
+import io.nethermind.pushnotifications.viewmodels.MainActivityViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
     companion object {
         val TAG = "MainActivity";
         var firebaseToken = "";
+
     }
 
+    val model: MainActivityViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +36,20 @@ class MainActivity : AppCompatActivity() {
         getFirebaseToken()
         setupAmplify()
         getCurrentUserData()
+
+        val loggedInObserver = Observer<Boolean> {
+            runOnUiThread {
+                if (it) {
+                    notLoggedInLayout.visibility = View.GONE
+                    loggedInLayout.visibility = View.VISIBLE
+                } else {
+                    loggedInLayout.visibility = View.GONE
+                    notLoggedInLayout.visibility = View.VISIBLE
+                }
+            }
+        }
+
+        model.isLoggedIn.observe(this, loggedInObserver)
 
         scanQrCodeButton.setOnClickListener {
 //            val intent = Intent(this, BarcodeScanner::class.java)
@@ -52,22 +72,27 @@ class MainActivity : AppCompatActivity() {
                 }
             )
         }
+
+        logoutButton.setOnClickListener {
+            Amplify.Auth.signOut({
+                                 Log.d(TAG, "Signed out successfully");
+                runOnUiThread {
+                    model.isLoggedIn.value = false
+                }
+            }, {
+                Log.d(TAG, "Sign out failed");
+            })
+        }
+
+
     }
 
     fun getCurrentUserData() {
         Amplify.Auth.fetchAuthSession(
             {
                 Log.i(TAG, "Auth session = ${it.isSignedIn}")
-                if (it.isSignedIn){
-                    runOnUiThread {
-                        notLoggedInLayout.visibility = View.GONE
-                        loggedInLayout.visibility = View.VISIBLE
-                    }
-                }else{
-                    runOnUiThread {
-                        loggedInLayout.visibility = View.GONE
-                        notLoggedInLayout.visibility = View.VISIBLE
-                    }
+                runOnUiThread {
+                    model.isLoggedIn.value = it.isSignedIn
                 }
             },
             { error -> Log.e(TAG, "Failed to fetch auth session", error) }
@@ -79,21 +104,22 @@ class MainActivity : AppCompatActivity() {
 
         if (requestCode == AWSCognitoAuthPlugin.WEB_UI_SIGN_IN_ACTIVITY_CODE) {
             Amplify.Auth.handleWebUISignInResponse(data)
+            getCurrentUserData()
         }
     }
 
-    private fun setupAmplify(){
-        try{
+    private fun setupAmplify() {
+        try {
             Log.i(TAG, "Initialised Amplify")
             Amplify.addPlugin(AWSCognitoAuthPlugin())
             Amplify.configure(applicationContext)
             fetchCurrentUser()
-        }catch (error: AmplifyException){
+        } catch (error: AmplifyException) {
             Log.e(TAG, "Could not initialise Amplify", error)
         }
     }
 
-    private fun fetchCurrentUser(){
+    private fun fetchCurrentUser() {
         Amplify.Auth.fetchAuthSession(
             { Log.i(TAG, "Auth session = $it") },
             { error -> Log.e(TAG, "Failed to fetch auth session", error) }
@@ -105,12 +131,12 @@ class MainActivity : AppCompatActivity() {
         checkBundle()
     }
 
-    private fun checkBundle(){
+    private fun checkBundle() {
         val bundle = intent.extras
-        if(bundle?.containsKey("result") == true){
+        if (bundle?.containsKey("result") == true) {
             val message = "Login data is ${bundle.get("result")}"
             Log.d(TAG, message)
-            Toast.makeText(this,message , Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
         }
     }
 

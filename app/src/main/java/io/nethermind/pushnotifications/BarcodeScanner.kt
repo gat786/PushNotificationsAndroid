@@ -17,6 +17,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import io.nethermind.pushnotifications.databinding.ActivityBarcodeScannerBinding
+import io.nethermind.pushnotifications.view.MainActivity
 import kotlinx.android.synthetic.main.activity_barcode_scanner.*
 import java.util.*
 import java.util.concurrent.ExecutorService

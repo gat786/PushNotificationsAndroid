@@ -31,7 +31,7 @@
             android:name=".BarcodeScanner"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".view.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -50,6 +50,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="pushnotifications" android:host="login"/>
+                <data android:scheme="pushnotifications" android:host="logout"/>
             </intent-filter>
         </activity>
 

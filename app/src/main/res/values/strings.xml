@@ -5,4 +5,5 @@
     <string name="connect_your_account">Connect your account</string>
     <string name="sad_not_logged_in_icon">Sad not-logged in icon</string>
     <string name="welcome_to_melange_push_notifications_app">Welcome to Melange Push Notifications App</string>
+    <string name="click_here_to_logout">Click here to logout</string>
 </resources>
