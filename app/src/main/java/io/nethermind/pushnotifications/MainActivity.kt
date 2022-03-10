@@ -35,13 +35,21 @@ class MainActivity : AppCompatActivity() {
             Amplify.Auth.signInWithSocialWebUI(AuthProvider.google(),
                 this,
                 {
-                    Log.d(TAG, "Signing in successful ${it.nextStep}")
+                    Log.d(TAG, "Signing in successful $it")
                     val currentUser = Amplify.Auth.currentUser;
                     Log.d(TAG, "Current user is ${currentUser}")
+                    runOnUiThread {
+                        Toast.makeText(this, "Current logged in user is $currentUser", Toast.LENGTH_SHORT).show()
+                    }
+
                 },
                 {
                     Log.d(TAG, "Signing in failed")
+
                     it.printStackTrace()
+                    runOnUiThread {
+                        Toast.makeText(this, "Log in failed", Toast.LENGTH_SHORT).show()
+                    }
 //                    Log.e(TAG, it.stackTrace.toString())
                 }
             )
