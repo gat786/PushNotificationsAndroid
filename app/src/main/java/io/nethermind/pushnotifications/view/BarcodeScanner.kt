@@ -1,4 +1,4 @@
-package io.nethermind.pushnotifications
+package io.nethermind.pushnotifications.view
 
 import android.Manifest
 import android.content.Intent
@@ -16,8 +16,8 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import io.nethermind.pushnotifications.BarCodeAnalyzer
 import io.nethermind.pushnotifications.databinding.ActivityBarcodeScannerBinding
-import io.nethermind.pushnotifications.view.MainActivity
 import kotlinx.android.synthetic.main.activity_barcode_scanner.*
 import java.util.*
 import java.util.concurrent.ExecutorService
@@ -41,7 +41,8 @@ class BarcodeScanner : AppCompatActivity() {
             startCamera()
         } else {
             ActivityCompat.requestPermissions(
-                this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
+                this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
+            )
         }
 
         cameraExecutor = Executors.newSingleThreadExecutor()
