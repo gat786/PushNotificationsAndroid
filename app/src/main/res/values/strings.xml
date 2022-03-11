@@ -3,7 +3,11 @@
     <string name="check_button_for_going_to_main_activity">check-button for going to main activity</string>
     <string name="scanning_completed_logging_you_in">Scanning Completed Logging you in!</string>
     <string name="connect_your_account">Connect your account</string>
+    <string name="login_with_google">Login with Google</string>
     <string name="sad_not_logged_in_icon">Sad not-logged in icon</string>
     <string name="welcome_to_melange_push_notifications_app">Welcome to Melange Push Notifications App</string>
     <string name="click_here_to_logout">Click here to logout</string>
+    <string name="password">Password</string>
+    <string name="email_address">Email Address</string>
+    <string name="login">Login</string>
 </resources>

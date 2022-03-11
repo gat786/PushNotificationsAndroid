@@ -3,19 +3,21 @@
     package="io.nethermind.pushnotifications">
 
     <uses-feature android:name="android.hardware.camera.any" />
+
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
 
     <queries>
         <intent>
             <action android:name="android.intent.action.VIEW" />
+
             <data android:scheme="https" />
         </intent>
         <intent>
-            <action android:name=
-                "android.support.customtabs.action.CustomTabsService" />
+            <action android:name="android.support.customtabs.action.CustomTabsService" />
         </intent>
     </queries>
 
@@ -28,6 +30,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity
+            android:name=".FeedScreen"
+            android:exported="false" />
+        <activity
             android:name=".view.BarcodeScanner"
             android:exported="false" />
         <activity
@@ -35,22 +40,27 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <category android:name="android.intent.category.DEFAULT"/>
-
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
         <activity
             android:name="com.amplifyframework.auth.cognito.activities.HostedUIRedirectActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="pushnotifications" android:host="login"/>
-                <data android:scheme="pushnotifications" android:host="logout"/>
+
+                <data
+                    android:host="login"
+                    android:scheme="pushnotifications" />
+                <data
+                    android:host="logout"
+                    android:scheme="pushnotifications" />
             </intent-filter>
         </activity>
 
@@ -66,4 +76,5 @@
             </intent-filter>
         </service>
     </application>
+
 </manifest>

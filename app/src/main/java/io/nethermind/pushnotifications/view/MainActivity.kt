@@ -3,11 +3,9 @@ package io.nethermind.pushnotifications.view
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import com.amplifyframework.AmplifyException
 import com.amplifyframework.auth.AuthProvider
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
@@ -16,6 +14,7 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.ktx.messaging
+import io.nethermind.pushnotifications.FeedScreen
 import io.nethermind.pushnotifications.R
 import io.nethermind.pushnotifications.viewmodels.MainActivityViewModel
 import kotlinx.android.synthetic.main.activity_main.*
@@ -35,23 +34,8 @@ class MainActivity : AppCompatActivity() {
 
         getFirebaseToken()
         setupAmplify()
-        getCurrentUserData()
 
-        val loggedInObserver = Observer<Boolean> {
-            runOnUiThread {
-                if (it) {
-                    notLoggedInLayout.visibility = View.GONE
-                    loggedInLayout.visibility = View.VISIBLE
-                } else {
-                    loggedInLayout.visibility = View.GONE
-                    notLoggedInLayout.visibility = View.VISIBLE
-                }
-            }
-        }
-
-        model.isLoggedIn.observe(this, loggedInObserver)
-
-        scanQrCodeButton.setOnClickListener {
+        loginWithGoogleButton.setOnClickListener {
 //            val intent = Intent(this, BarcodeScanner::class.java)
 //            startActivity(intent)
 
@@ -59,7 +43,9 @@ class MainActivity : AppCompatActivity() {
                 this,
                 {
                     Log.d(TAG, "Signing in successful $it")
-                    val currentUser = Amplify.Auth.currentUser;
+                    runOnUiThread {
+                        Toast.makeText(this, "Log in Successful", Toast.LENGTH_SHORT).show()
+                    }
                 },
                 {
                     Log.d(TAG, "Signing in failed")
@@ -75,7 +61,7 @@ class MainActivity : AppCompatActivity() {
 
         logoutButton.setOnClickListener {
             Amplify.Auth.signOut({
-                                 Log.d(TAG, "Signed out successfully");
+                Log.d(TAG, "Signed out successfully");
                 runOnUiThread {
                     model.isLoggedIn.value = false
                 }
@@ -92,7 +78,8 @@ class MainActivity : AppCompatActivity() {
             {
                 Log.i(TAG, "Auth session = ${it.isSignedIn}")
                 runOnUiThread {
-                    model.isLoggedIn.value = it.isSignedIn
+                    val intent = Intent(this, FeedScreen::class.java)
+                    startActivity(intent)
                 }
             },
             { error -> Log.e(TAG, "Failed to fetch auth session", error) }
@@ -104,7 +91,6 @@ class MainActivity : AppCompatActivity() {
 
         if (requestCode == AWSCognitoAuthPlugin.WEB_UI_SIGN_IN_ACTIVITY_CODE) {
             Amplify.Auth.handleWebUISignInResponse(data)
-            getCurrentUserData()
         }
     }
 
@@ -113,22 +99,10 @@ class MainActivity : AppCompatActivity() {
             Log.i(TAG, "Initialised Amplify")
             Amplify.addPlugin(AWSCognitoAuthPlugin())
             Amplify.configure(applicationContext)
-            fetchCurrentUser()
+            getCurrentUserData()
         } catch (error: AmplifyException) {
             Log.e(TAG, "Could not initialise Amplify", error)
         }
-    }
-
-    private fun fetchCurrentUser() {
-        Amplify.Auth.fetchAuthSession(
-            { Log.i(TAG, "Auth session = $it") },
-            { error -> Log.e(TAG, "Failed to fetch auth session", error) }
-        )
-    }
-
-    override fun onResume() {
-        super.onResume()
-        checkBundle()
     }
 
     private fun checkBundle() {
